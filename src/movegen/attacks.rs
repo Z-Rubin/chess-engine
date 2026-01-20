@@ -1,6 +1,33 @@
 use crate::board::bitboard::{Bitboard, bb, FILE_A, FILE_H};
 
-pub fn knight_attacks(square: u8) -> Bitboard {
+// Attack lookup tables
+static mut KNIGHT_ATTACKS: [Bitboard; 64] = [0; 64];
+static mut KING_ATTACKS: [Bitboard; 64] = [0; 64];
+static mut WHITE_PAWN_ATTACKS: [Bitboard; 64] = [0; 64];
+static mut BLACK_PAWN_ATTACKS: [Bitboard; 64] = [0; 64];
+
+// Initialization flag
+static mut TABLES_INITIALIZED: bool = false;
+
+/// Initialize all attack tables. Must be called before using lookup functions.
+pub fn init_attack_tables() {
+    unsafe {
+        if TABLES_INITIALIZED {
+            return;
+        }
+
+        for square in 0..64 {
+            KNIGHT_ATTACKS[square] = compute_knight_attacks(square as u8);
+            KING_ATTACKS[square] = compute_king_attacks(square as u8);
+            WHITE_PAWN_ATTACKS[square] = compute_white_pawn_attacks(square as u8);
+            BLACK_PAWN_ATTACKS[square] = compute_black_pawn_attacks(square as u8);
+        }
+
+        TABLES_INITIALIZED = true;
+    }
+}
+
+fn compute_knight_attacks(square: u8) -> Bitboard {
     let b = bb(square);
     let mut attacks = 0;
 
@@ -17,7 +44,7 @@ pub fn knight_attacks(square: u8) -> Bitboard {
     attacks
 }
 
-pub fn king_attacks(square: u8) -> Bitboard {
+fn compute_king_attacks(square: u8) -> Bitboard {
     let b = bb(square);
     let mut attacks = 0;
 
@@ -33,16 +60,38 @@ pub fn king_attacks(square: u8) -> Bitboard {
     attacks
 }
 
-/// White pawn attacks
-pub fn white_pawn_attacks(square: u8) -> Bitboard {
+fn compute_white_pawn_attacks(square: u8) -> Bitboard {
     let b = bb(square);
     ((b << 7) & !FILE_H) | ((b << 9) & !FILE_A)
 }
 
-/// Black pawn attacks
-pub fn black_pawn_attacks(square: u8) -> Bitboard {
+fn compute_black_pawn_attacks(square: u8) -> Bitboard {
     let b = bb(square);
     ((b >> 7) & !FILE_A) | ((b >> 9) & !FILE_H)
+}
+
+/// Get knight attacks from lookup table
+#[inline]
+pub fn knight_attacks(square: u8) -> Bitboard {
+    unsafe { KNIGHT_ATTACKS[square as usize] }
+}
+
+/// Get king attacks from lookup table
+#[inline]
+pub fn king_attacks(square: u8) -> Bitboard {
+    unsafe { KING_ATTACKS[square as usize] }
+}
+
+/// Get white pawn attacks from lookup table
+#[inline]
+pub fn white_pawn_attacks(square: u8) -> Bitboard {
+    unsafe { WHITE_PAWN_ATTACKS[square as usize] }
+}
+
+/// Get black pawn attacks from lookup table
+#[inline]
+pub fn black_pawn_attacks(square: u8) -> Bitboard {
+    unsafe { BLACK_PAWN_ATTACKS[square as usize] }
 }
 
 #[inline]
@@ -115,21 +164,25 @@ mod tests {
     
     #[test]
     fn knight_center() {
+        init_attack_tables();
         assert_eq!(knight_attacks(Square::E4 as u8).count_ones(), 8);
     }
 
     #[test]
     fn king_center() {
+        init_attack_tables();
         assert_eq!(king_attacks(Square::E4 as u8).count_ones(), 8);
     }
 
     #[test]
     fn white_pawn_center() {
+        init_attack_tables();
         assert_eq!(white_pawn_attacks(Square::E4 as u8).count_ones(), 2);
     }
 
     #[test]
     fn black_pawn_center() {
+        init_attack_tables();
         assert_eq!(black_pawn_attacks(Square::E5 as u8).count_ones(), 2);
     }
 

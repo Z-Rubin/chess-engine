@@ -2,6 +2,9 @@ use chess_engine::board::board::Board;
 use chess_engine::movegen::perft::perft;
 
 fn main() {
+    // Initialize attack tables
+    chess_engine::movegen::init();
+    
     let mut board = Board::startpos();
     
     println!("Checking perft depths:");

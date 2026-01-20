@@ -24,6 +24,9 @@ fn move_to_string(mv: &chess_engine::board::r#move::Move) -> String {
 }
 
 fn main() {
+    // Initialize attack tables
+    chess_engine::movegen::init();
+    
     // Known correct perft(5) divide from starting position:
     let expected: Vec<(&str, u64)> = vec![
         ("a2a3", 181046),
