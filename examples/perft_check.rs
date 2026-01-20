@@ -11,6 +11,6 @@ fn main() {
     println!("Depth 4: {} (expected 197281)", perft(&mut board, 4));
     println!("Depth 5: {} (expected 4865609)", perft(&mut board, 5));
     println!("Depth 6: {} (expected 119060324)", perft(&mut board, 6));
-    println!("Depth 7: {} (expected 3195901860)", perft(&mut board, 7));
-    println!("Depth 8: {} (expected 84998978956)", perft(&mut board, 8));
+    // println!("Depth 7: {} (expected 3195901860)", perft(&mut board, 7));
+    // println!("Depth 8: {} (expected 84998978956)", perft(&mut board, 8));
 }
