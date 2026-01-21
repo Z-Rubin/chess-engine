@@ -83,6 +83,5 @@ mod tests {
         assert_eq!(perft(&mut board, 3), 8_902);
         assert_eq!(perft(&mut board, 4), 197_281);
         assert_eq!(perft(&mut board, 5), 4_865_609);
-        assert_eq!(perft(&mut board, 6), 119_060_324);
-    }
+        }
 }

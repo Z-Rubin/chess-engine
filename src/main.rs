@@ -1,3 +1,4 @@
+use chess_engine::uci;
 fn main() {
-    println!("Chess engine dev build");
+    uci::uci_loop();
 }
